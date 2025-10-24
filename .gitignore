@@ -1,0 +1,80 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.env
+
+# Computer Vision & ML specific
+*.pt         # PyTorch model weights
+*.onnx       # ONNX models
+*.engine     # TensorRT engines
+*.tflite     # TensorFlow Lite models
+
+# Media files (large datasets)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tiff
+*.gif
+
+# Except sample/demo files in specific locations
+!samples/*.png
+!samples/*.jpg
+!docs/**/*.png
+!docs/**/*.jpg
+
+# Generated output directories
+runs/
+outputs/
+results/
+experiments/
+
+# Data directories (should be downloaded separately)
+data/
+datasets/
+
+# IDE and editor files
+.vscode/
+.idea/
+.obsidian/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Symlinks and Work directories
+Work/
+
+# OS specific
+Thumbs.db
+.directory
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# mypy cache
+.mypy_cache/
+
+# pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Logs
+*.log
+logs/
