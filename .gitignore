@@ -45,6 +45,9 @@ experiments/
 data/
 datasets/
 
+# Documentation (local reference only)
+docs/
+
 # IDE and editor files
 .vscode/
 .idea/
