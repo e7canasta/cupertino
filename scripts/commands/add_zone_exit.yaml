@@ -1,0 +1,17 @@
+# Add exit zone (polygon)
+#
+# Usage:
+#   cupertino-cli add-zone config/commands/add_zone_exit.yaml
+
+command: add_zone
+zone_id: exit
+zone_type: polygon
+
+# Polygon coordinates
+coordinates:
+  - [600, 200]
+  - [900, 200]
+  - [900, 600]
+  - [600, 600]
+
+enabled: true

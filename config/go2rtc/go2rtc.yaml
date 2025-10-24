@@ -1,0 +1,38 @@
+# go2rtc Configuration
+# Converts video file to RTSP stream for testing Cupertino StreamProcessor
+#
+# Usage:
+#   go2rtc -config config/go2rtc/go2rtc.yaml
+#
+# Health Check:
+#   curl http://localhost:1984/api/streams
+#
+# Test Stream:
+#   ffplay rtsp://localhost:8554/camera1
+
+streams:
+  camera1:
+    # Loop video infinitely with ffmpeg
+    # Format: ffmpeg:<path>#video=h264#hardware
+    #
+    # Options:
+    #   - stream_loop=-1: Infinite loop (ffmpeg auto-detects from go2rtc)
+    #   - re: Read input at native frame rate (real-time simulation)
+    #   - video=h264: Use H.264 codec
+    #   - hardware: Use hardware acceleration if available
+    #
+    # Note: No audio in source video, so we don't specify audio codec
+    - ffmpeg:data/videos/vehicles-1280x720.mp4#video=h264#hardware
+
+# API Configuration
+api:
+  listen: ":1984"  # Web UI and API on port 1984
+
+# RTSP Configuration
+rtsp:
+  listen: ":8554"  # RTSP server on port 8554
+
+# Logging
+log:
+  level: info  # Options: trace, debug, info, warn, error
+  format: text  # Options: text, json

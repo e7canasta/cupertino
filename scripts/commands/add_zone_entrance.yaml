@@ -1,0 +1,19 @@
+# Add entrance zone (polygon)
+#
+# Usage:
+#   cupertino-cli add-zone config/commands/add_zone_entrance.yaml
+
+command: add_zone
+zone_id: entrance
+zone_type: polygon
+
+# Polygon coordinates (clockwise or counter-clockwise)
+# Format: [[x1, y1], [x2, y2], ...]
+coordinates:
+  - [100, 200]
+  - [500, 200]
+  - [500, 600]
+  - [100, 600]
+
+# Optional: Enable immediately (default: true)
+enabled: true

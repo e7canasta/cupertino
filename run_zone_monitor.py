@@ -2,18 +2,25 @@
 Zone Monitor Demo
 =================
 
-Demonstrates cupertino_zone package usage.
+Demonstrates cupertino_zone package usage with NEW REFACTORED API.
 
-Example: Monitor vehicles in a polygon zone.
+Example: Monitor vehicles in a polygon zone and line crossing.
+
+Architecture:
+- geometry: PolygonZone, LineZone (immutable shapes)
+- analytics: ZoneCounter, CrossingTracker (stateful counting)
+- rendering: ZoneVisualizer (drawing)
+- pipeline: Orchestration
 """
 
 import supervision as sv
 import numpy as np
 from ultralytics import YOLO
 
+# New API - separation of concerns
 from cupertino_zone import (
-    PolygonZoneMonitor,
-    LineZoneMonitor,
+    PolygonZone,
+    LineZone,
     ZoneVisualizer,
     PipelineBuilder,
 )
@@ -22,7 +29,7 @@ VIDEO_PATH = "./data/videos/vehicles-1280x720.mp4"
 
 
 def main():
-    """Run zone monitoring on vehicles video."""
+    """Run zone monitoring on vehicles video using NEW API."""
 
     # 1. Load detection model
     model = YOLO("yolov8n.pt")
@@ -31,22 +38,22 @@ def main():
     video_info = sv.VideoInfo.from_video_path(VIDEO_PATH)
     width, height = video_info.width, video_info.height
 
-    # 3. Define zones
+    # 3. Define zones (NEW API - pure geometry)
     # Polygon zone - monitor area in bottom half of frame
-    polygon_zone = PolygonZoneMonitor(
-        polygon=np.array([
+    polygon_zone = PolygonZone(
+        vertices=np.array([
             [width // 4, height // 2],
             [3 * width // 4, height // 2],
             [3 * width // 4, height - 50],
             [width // 4, height - 50],
-        ], dtype=np.int64),
+        ], dtype=np.int32),  # Note: int32 for cv2 compatibility
         frame_resolution_wh=(width, height),
     )
 
     # Line zone - count crossings at middle of frame
-    line_zone = LineZoneMonitor(
-        start=sv.Point(x=0, y=height // 2),
-        end=sv.Point(x=width, y=height // 2),
+    line_zone = LineZone(
+        start=(0, height // 2),
+        end=(width, height // 2),
     )
 
     # 4. Create visualizer with custom colors
@@ -58,13 +65,13 @@ def main():
         opacity=0.2,
     )
 
-    # 5. Build pipeline using Builder pattern
+    # 5. Build pipeline using Builder pattern (NEW API)
     pipeline = (
         PipelineBuilder()
         .with_video(VIDEO_PATH)
         .with_model(model)
-        .add_zone(polygon_zone)
-        .add_zone(line_zone)
+        .add_polygon_zone("parking_area", polygon_zone)  # Type-safe methods
+        .add_line_zone("crossing", line_zone)
         .with_visualizer(visualizer)
         .with_stride(2)  # Process every 2nd frame
         .with_output_fps(10)
@@ -72,12 +79,22 @@ def main():
     )
 
     # 6. Process video
+    print("🎬 Starting zone monitoring...")
+    print(f"  Video: {VIDEO_PATH}")
+    print(f"  Zones: 1 polygon + 1 line")
+    print()
+
     output_path = pipeline.process()
 
-    print(f"✓ Zone monitoring completed!")
+    # 7. Print final statistics (access via pipeline config)
+    print()
+    print("✓ Zone monitoring completed!")
     print(f"  Output: {output_path}")
-    print(f"  Polygon zone final count: {polygon_zone.current_count}")
-    print(f"  Line zone crossings - IN: {line_zone.in_count}, OUT: {line_zone.out_count}")
+    
+    # Get final stats from pipeline zones
+    for zone_cfg in pipeline.config.zones:
+        stats = zone_cfg.counter.get_stats()
+        print(f"  {zone_cfg.zone_id}: {stats}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,68 @@
+# cupertino_processor configuration
+#
+# This file configures the stream processor service for zone monitoring
+# with YOLO object detection and MQTT publishing.
+
+# Service identification
+service_id: "cam_01"
+
+# RTSP stream configuration
+rtsp_url: "rtsp://localhost:8554/camera1"
+max_fps: 25
+frame_resolution_wh: [1280, 720]  # [width, height] - Must match RTSP stream resolution
+
+# YOLO model configuration
+model_config:
+  model_version: "12" # YOLO version: "11" or "12"
+  model_variant: "n"  # Model size: "n", "s", "m", "l", "x"
+  input_size: 640     # Input size: 320, 640 (available in ONNX format)
+  model_format: "onnx" # Model format: "onnx" or "pt"
+  confidence: 0.5     # Detection confidence threshold [0.0, 1.0]
+  iou_threshold: 0.5  # NMS IoU threshold [0.0, 1.0]
+  max_detections: 300 # Maximum detections per frame
+
+# Models directory (where YOLO model files are stored)
+# See models/MODEL_CATALOG.md for complete list of available models
+models_dir: "./models"
+
+# Zone definitions
+zones:
+  # Example: Polygon zone (entrance area)
+  - zone_id: "entrance"
+    zone_type: "polygon"
+    coordinates:
+      - [100, 200]
+      - [500, 200]
+      - [500, 600]
+      - [100, 600]
+    enabled: true
+
+  # Example: Line zone (crossing detection)
+  - zone_id: "crossing_line"
+    zone_type: "line"
+    coordinates:
+      - [300, 100]
+      - [300, 700]
+    enabled: true
+
+  # Example: Polygon zone (exit area)
+  - zone_id: "exit"
+    zone_type: "polygon"
+    coordinates:
+      - [600, 200]
+      - [900, 200]
+      - [900, 600]
+      - [600, 600]
+    enabled: false  # Initially disabled
+
+# MQTT broker configuration
+mqtt_config:
+  broker: "localhost"
+  port: 1883
+  username: null  # Optional: MQTT username
+  password: null  # Optional: MQTT password (can use env var: ${MQTT_PASSWORD})
+  qos: 0          # Data plane QoS (0 = fire-and-forget, 1 = at least once)
+
+  # MQTT topics (with service_id placeholder)
+  detection_topic: "cupertino/data/detections/{service_id}"
+  zone_event_topic: "cupertino/data/zones/{service_id}"

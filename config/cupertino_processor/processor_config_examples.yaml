@@ -1,0 +1,208 @@
+# cupertino_processor configuration examples
+#
+# This file shows different configuration examples for various use cases.
+# Copy one of these examples to processor_config.yaml and modify as needed.
+
+# ============================================================================
+# Example 1: Edge Device - Fast Processing (ONNX Nano 320)
+# ============================================================================
+# Best for: Low-power devices, high FPS requirements, basic detection
+# Trade-off: Lower accuracy, smaller objects may be missed
+
+# service_id: "edge_cam_01"
+# rtsp_url: "rtsp://localhost:8554/camera1"
+# max_fps: 30
+# 
+# model_config:
+#   model_version: "12"
+#   model_variant: "n"
+#   input_size: 320
+#   model_format: "onnx"
+#   confidence: 0.4
+#   iou_threshold: 0.5
+#   max_detections: 300
+# 
+# models_dir: "./models"
+
+# ============================================================================
+# Example 2: Balanced Production - Recommended (ONNX Small 640)
+# ============================================================================
+# Best for: Most production scenarios, good balance of speed and accuracy
+# Trade-off: Balanced between performance and accuracy
+
+# service_id: "prod_cam_01"
+# rtsp_url: "rtsp://192.168.1.100:554/stream1"
+# max_fps: 25
+# 
+# model_config:
+#   model_version: "12"
+#   model_variant: "s"
+#   input_size: 640
+#   model_format: "onnx"
+#   confidence: 0.5
+#   iou_threshold: 0.5
+#   max_detections: 300
+# 
+# models_dir: "./models"
+
+# ============================================================================
+# Example 3: High Accuracy - Security/Critical (ONNX Large 640)
+# ============================================================================
+# Best for: Security applications, critical detection scenarios
+# Trade-off: Lower FPS, requires more powerful hardware
+
+# service_id: "security_cam_01"
+# rtsp_url: "rtsp://192.168.1.100:554/stream1"
+# max_fps: 15
+# 
+# model_config:
+#   model_version: "12"
+#   model_variant: "l"
+#   input_size: 640
+#   model_format: "onnx"
+#   confidence: 0.6
+#   iou_threshold: 0.45
+#   max_detections: 300
+# 
+# models_dir: "./models"
+
+# ============================================================================
+# Example 4: Development/Testing - Flexible (PyTorch Medium)
+# ============================================================================
+# Best for: Development, experimentation, custom input sizes
+# Trade-off: Slower than ONNX, requires PyTorch runtime
+
+# service_id: "dev_cam_01"
+# rtsp_url: "rtsp://localhost:8554/camera1"
+# max_fps: 20
+# 
+# model_config:
+#   model_version: "12"
+#   model_variant: "m"
+#   input_size: 480  # PT models accept any size
+#   model_format: "pt"
+#   confidence: 0.5
+#   iou_threshold: 0.5
+#   max_detections: 300
+# 
+# models_dir: "./models"
+
+# ============================================================================
+# Example 5: Maximum Performance (YOLO11 XLarge 640)
+# ============================================================================
+# Best for: High-end servers, maximum accuracy required
+# Trade-off: Very slow, requires significant GPU resources
+
+# service_id: "server_cam_01"
+# rtsp_url: "rtsp://192.168.1.100:554/stream1"
+# max_fps: 10
+# 
+# model_config:
+#   model_version: "11"  # YOLO11 for stability
+#   model_variant: "x"
+#   input_size: 640
+#   model_format: "onnx"
+#   confidence: 0.7
+#   iou_threshold: 0.4
+#   max_detections: 500
+# 
+# models_dir: "./models"
+
+# ============================================================================
+# Example 6: Multi-Zone Monitoring
+# ============================================================================
+# Best for: Complex zone monitoring with multiple areas
+
+# service_id: "warehouse_cam_01"
+# rtsp_url: "rtsp://192.168.1.100:554/stream1"
+# max_fps: 25
+# 
+# model_config:
+#   model_version: "12"
+#   model_variant: "s"
+#   input_size: 640
+#   model_format: "onnx"
+#   confidence: 0.5
+#   iou_threshold: 0.5
+#   max_detections: 300
+# 
+# models_dir: "./models"
+# 
+# zones:
+#   # Loading dock entrance
+#   - zone_id: "loading_dock"
+#     zone_type: "polygon"
+#     coordinates:
+#       - [100, 200]
+#       - [500, 200]
+#       - [500, 600]
+#       - [100, 600]
+#     enabled: true
+# 
+#   # Pedestrian crossing line
+#   - zone_id: "pedestrian_crossing"
+#     zone_type: "line"
+#     coordinates:
+#       - [300, 100]
+#       - [300, 700]
+#     enabled: true
+# 
+#   # Restricted area
+#   - zone_id: "restricted_area"
+#     zone_type: "polygon"
+#     coordinates:
+#       - [600, 300]
+#       - [900, 300]
+#       - [900, 500]
+#       - [600, 500]
+#     enabled: true
+# 
+#   # Emergency exit
+#   - zone_id: "emergency_exit"
+#     zone_type: "polygon"
+#     coordinates:
+#       - [1000, 200]
+#       - [1200, 200]
+#       - [1200, 400]
+#       - [1000, 400]
+#     enabled: false  # Enable only during monitoring mode
+# 
+# mqtt_config:
+#   broker: "localhost"
+#   port: 1883
+#   username: null
+#   password: null
+#   qos: 1  # Higher reliability for security/compliance
+#   detection_topic: "cupertino/data/detections/{service_id}"
+#   zone_event_topic: "cupertino/data/zones/{service_id}"
+
+# ============================================================================
+# Configuration Matrix Summary
+# ============================================================================
+#
+# Model Selection Guide:
+# ----------------------
+# nano (n):    ~10 MB  | Fastest     | Low accuracy    | Edge devices
+# small (s):   ~36 MB  | Fast        | Good accuracy   | Recommended
+# medium (m):  ~77 MB  | Moderate    | Better accuracy | Development
+# large (l):   ~97 MB  | Slow        | High accuracy   | Security
+# xlarge (x):  ~217 MB | Very slow   | Best accuracy   | Server
+#
+# Format Selection:
+# -----------------
+# ONNX: Production, optimized, fixed input size (320 or 640)
+# PT:   Development, flexible input size, slower
+#
+# Input Size:
+# -----------
+# 320:  Faster, less detail
+# 640:  Balanced (recommended)
+# 1280: Maximum detail (PT only, very slow)
+#
+# FPS Recommendations:
+# -------------------
+# Edge (nano):     25-30 FPS
+# Production (s):  20-25 FPS
+# Security (l):    10-15 FPS
+# Server (x):      5-10 FPS
+

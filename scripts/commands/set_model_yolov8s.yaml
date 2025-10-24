@@ -1,0 +1,10 @@
+# Change YOLO model to yolov8s (small - balanced)
+#
+# Usage:
+#   cupertino-cli set-model config/commands/set_model_yolov8s.yaml
+
+command: set_model
+model_variant: "s"
+input_size: 640
+confidence: 0.5
+iou_threshold: 0.5

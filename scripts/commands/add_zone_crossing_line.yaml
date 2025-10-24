@@ -1,0 +1,16 @@
+# Add crossing line zone (line)
+#
+# Usage:
+#   cupertino-cli add-zone config/commands/add_zone_crossing_line.yaml
+
+command: add_zone
+zone_id: crossing_line
+zone_type: line
+
+# Line coordinates (two points)
+# Format: [[x1, y1], [x2, y2]]
+coordinates:
+  - [300, 100]
+  - [300, 700]
+
+enabled: true
